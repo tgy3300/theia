@@ -94,6 +94,7 @@ script:
   - travis_retry yarn test:theia ;
   - travis_retry yarn test:electron ;
   - travis_retry yarn test:browser ;
+  - travis_retry npx electron-h264-test ;
 notifications:
   webhooks:
     urls:

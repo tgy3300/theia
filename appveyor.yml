@@ -27,6 +27,7 @@ test_script:
   - appveyor-retry yarn test:theia
   - appveyor-retry yarn test:electron
   - appveyor-retry yarn test:browser
+  - appveyor-retry npx electron-h264-test
 
 notifications:
   - provider: Webhook
