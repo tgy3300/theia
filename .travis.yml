@@ -71,6 +71,7 @@ env:
   global:
     - CXX=g++-4.8
     - NODE_OPTIONS="--max_old_space_size=4096"
+    - NO_AT_BRIDGE=1
 addons:
   apt:
     update: true
@@ -84,17 +85,28 @@ addons:
     - libxkbfile-dev
     chrome: stable
 before_script:
-  - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start ;
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost \&  ;
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start; sleep 3;
+      eval $(dbus-launch --sh-syntax);
+      eval $(echo -n "" | /usr/bin/gnome-keyring-daemon --login);
+      eval $(/usr/bin/gnome-keyring-daemon --components=secrets --start);
+      /usr/bin/python -c "import gnomekeyring;gnomekeyring.create_sync('login', '');";
+    fi
+  # - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost \&
 before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0 ;
   - export PATH=$HOME/.yarn/bin:$PATH ;
-install: yarn && scripts/check_git_status.sh
+install:
+  - THEIA_SKIP_NPM_PREPARE=1 yarn install || echo fail ;
+  - ldd node_modules/electron/dist/electron ;
+  - travis_retry npx electron-h264-test ;
 script:
+  - yarn build ;
+  - scripts/check_git_status.sh ;
   - travis_retry yarn test:theia ;
   - travis_retry yarn test:electron ;
   - travis_retry yarn test:browser ;
-  - travis_retry npx electron-h264-test ;
 notifications:
   webhooks:
     urls:

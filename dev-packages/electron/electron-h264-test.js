@@ -31,8 +31,10 @@ electronApp.on('error', error => {
 })
 
 electronApp.on('close', (code, signal) => {
-    if (code || signal) process.exit(code || 1);
-    else process.exit(0);
+    if (code || signal) {
+        if (signal) console.error(signal);
+        process.exit(code || 1);
+    } else process.exit(0);
 })
 
 setTimeout(() => {
