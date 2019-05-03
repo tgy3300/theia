@@ -232,12 +232,13 @@ export class QuickPickExt<T extends QuickPickItem> implements QuickPick<T> {
     }
 
     show(): void {
+        const hide = () => {
+            this.onDidHideEmitter.fire(undefined);
+        };
         const selectItem = (item: T) => {
             this.activeItems = [item];
             this.onDidAcceptEmitter.fire(undefined);
             this.onDidChangeSelectionEmitter.fire([item]);
-            this.onDidHideEmitter.fire(undefined);
-            this.dispose();
         };
         this.quickOpen.showQuickPick(this.items.map(item => item as T), {
             // tslint:disable-next-line:no-any
@@ -245,6 +246,7 @@ export class QuickPickExt<T extends QuickPickItem> implements QuickPick<T> {
                 if (typeof item !== 'string') {
                     selectItem(item);
                 }
+                hide();
             }, placeHolder: this.placeholder
         });
     }
