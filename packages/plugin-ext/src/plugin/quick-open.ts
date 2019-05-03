@@ -21,7 +21,7 @@ import { anyPromise } from '../api/async-util';
 import { hookCancellationToken } from '../api/async-util';
 import { Emitter, Event } from '@theia/core/lib/common/event';
 import { QuickPick, QuickInputButton } from '@theia/plugin';
-import { DisposableCollection } from '@theia/core';
+import { DisposableCollection } from '@theia/core/lib/common/disposable';
 
 export type Item = string | QuickPickItem;
 
@@ -235,6 +235,7 @@ export class QuickPickExt<T extends QuickPickItem> implements QuickPick<T> {
         const selectItem = (item: T) => {
             this.activeItems = [item];
             this.onDidAcceptEmitter.fire(undefined);
+            this.onDidChangeSelectionEmitter.fire([item]);
             this.onDidHideEmitter.fire(undefined);
             this.dispose();
         };
