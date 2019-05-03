@@ -737,12 +737,12 @@ export interface PreferenceRegistryMain {
         target: boolean | ConfigurationTarget | undefined,
         key: string,
         value: any,
-        resource: any | undefined
+        resource?: string
     ): PromiseLike<void>;
     $removeConfigurationOption(
         target: boolean | ConfigurationTarget | undefined,
         key: string,
-        resource: any | undefined
+        resource?: string
     ): PromiseLike<void>;
 }
 
@@ -758,7 +758,7 @@ export interface TerminalOptionsExt {
 }
 
 export interface PreferenceRegistryExt {
-    $acceptConfigurationChanged(data: { [key: string]: any }, eventData: PreferenceChangeExt): void;
+    $acceptConfigurationChanged(data: { [key: string]: any }, eventData: PreferenceChangeExt[]): void;
 }
 
 export interface OutputChannelRegistryMain {
